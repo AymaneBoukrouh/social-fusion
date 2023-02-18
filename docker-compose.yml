@@ -22,6 +22,19 @@ services:
     depends_on:
     - db
 
+  post_service:
+    build:
+      context: ./services/post
+      target: build
+    container_name: social_fusion_post_service
+    command: dotnet watch run
+    ports:
+    - 5544:80
+    volumes:
+    - ./services/post:/app
+    depends_on:
+    - db
+
   db:
     image: mariadb:latest
     container_name: social_fusion_db
