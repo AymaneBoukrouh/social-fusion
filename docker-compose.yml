@@ -27,11 +27,23 @@ services:
       context: ./services/post
       target: build
     container_name: social_fusion_post_service
-    command: dotnet watch run
+    command:
+    - sh
+    - -c
+    - |
+      dotnet restore
+      dotnet tool restore
+      dotnet ef database update
+      dotnet run
     ports:
-    - 5544:80
+    - 5146:5146
+    environment:
+      DB_HOST:                 db
+      DB_NAME:                 ${DB_NAME}
+      DB_USER:                 ${DB_USER}
+      DB_PASS:                 ${DB_PASS}
     volumes:
-    - ./services/post:/app
+    - ./services/post:/src
     depends_on:
     - db
 
