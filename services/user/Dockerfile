@@ -1,7 +1,10 @@
-FROM php:8.2-cli-alpine
+FROM php:8.2-apache
+
+# install PDO and MySQL extension
+RUN docker-php-ext-install pdo pdo_mysql
 
 # set working directory
-WORKDIR /app
+WORKDIR /var/www/html
 
 # copy source code
 COPY . .

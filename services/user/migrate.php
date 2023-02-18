@@ -1,0 +1,52 @@
+<?php
+
+// connect to the database
+$host = $_ENV['DB_HOST'];
+$name = $_ENV['DB_NAME'];
+$user = $_ENV['DB_USER'];
+$pass = $_ENV['DB_PASS'];
+
+$dsn = "mysql:host=$host;dbname=$name";
+$options = [
+  PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+  PDO::ATTR_EMULATE_PREPARES => false
+];
+
+try {
+  $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (PDOException $e) {
+  throw new PDOException($e->getMessage(), (int) $e->getCode());
+}
+
+// create migration table if not exists
+$check = $pdo->query("SHOW TABLES LIKE 'migration'");
+if ($check->rowCount() == 0) {
+  // create migration table
+  $pdo->query("CREATE TABLE migration (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB;");
+}
+
+// get applied migrations
+$applied = $pdo->query("SELECT name FROM migration")->fetchAll(PDO::FETCH_COLUMN);
+
+// get migration files
+$migrations = scandir(__DIR__.'/migrations');
+foreach ($migrations as $migration) {
+  // skip . and .. directories
+  if ($migration == '.' || $migration == '..')
+    continue;
+
+  // skip if already applied
+  if (in_array($migration, $applied))
+    continue;
+  
+  // apply migration
+  $pdo->query(file_get_contents(__DIR__.'/migrations/'.$migration));
+  $pdo->query("INSERT INTO migration (name) VALUES ('$migration')");
+}
+
+?>

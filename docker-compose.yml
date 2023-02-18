@@ -3,11 +3,22 @@ services:
   user_service:
     build: ./services/user
     container_name: social_fusion_user_service
-    command: php -S 0.0.0.0:8800
+    command:
+    - sh
+    - -c
+    - |
+      php migrate.php
+      php -S 0.0.0.0:8000
     ports:
     - 8800:8800
+    environment:
+      DB_HOST:                 db
+      DB_ROOT_PASS:            ${DB_ROOT_PASS}
+      DB_NAME:                 ${DB_NAME}
+      DB_USER:                 ${DB_USER}
+      DB_PASS:                 ${DB_PASS}
     volumes:
-    - ./services/user:/app
+    - ./services/user:/var/www/html
     depends_on:
     - db
 
