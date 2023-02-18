@@ -7,7 +7,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbHost = System.Environment.GetEnvironmentVariable("DB_HOST");
+var dbName = System.Environment.GetEnvironmentVariable("DB_NAME");
+var dbUser = System.Environment.GetEnvironmentVariable("DB_USER");
+var dbPass = System.Environment.GetEnvironmentVariable("DB_PASS");
+
+var connectionString = $"Server={dbHost};Database={dbName};User={dbUser};Password={dbPass};";
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
 {
   options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
