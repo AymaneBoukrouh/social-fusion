@@ -1,2 +1,7 @@
 RewriteEngine On
-RewriteRule ^users/([0-9]+)$ users/get.php?id=$1 [L]
+
+# Rewrite /users or /users/ to /users/list.php
+RewriteRule ^users/?$ users/list.php [L]
+
+# Rewrite /users/{id} to /users/detail.php?id={id}
+RewriteRule ^users/([0-9]+)$ users/detail.php?id=$1 [L]
