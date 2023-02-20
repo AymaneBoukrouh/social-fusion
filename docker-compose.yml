@@ -9,6 +9,7 @@ services:
     volumes:
     - ./gateway:/app
     depends_on:
+    - user_service
     - post_service
 
   user_service:
@@ -20,8 +21,6 @@ services:
     - |
       php migrate.php
       apache2-foreground
-    ports:
-    - 8800:80
     environment:
       DB_HOST:                 db
       DB_ROOT_PASS:            ${DB_ROOT_PASS}
