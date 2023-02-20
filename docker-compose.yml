@@ -8,6 +8,8 @@ services:
     - 3000:3000
     volumes:
     - ./gateway:/app
+    depends_on:
+    - post_service
 
   user_service:
     build: ./services/user
@@ -44,8 +46,6 @@ services:
       dotnet tool restore
       dotnet ef database update
       dotnet run
-    ports:
-    - 5146:5146
     environment:
       DB_HOST:                 db
       DB_NAME:                 ${DB_NAME}
