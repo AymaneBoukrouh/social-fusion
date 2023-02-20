@@ -1,5 +1,14 @@
 version: "3.8"
 services:
+  api_gateway:
+    build: ./gateway
+    container_name: social_fusion_api_gateway
+    command: npm run dev
+    ports:
+    - 3000:3000
+    volumes:
+    - ./gateway:/app
+
   user_service:
     build: ./services/user
     container_name: social_fusion_user_service
